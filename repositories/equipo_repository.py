@@ -1,3 +1,11 @@
+from flask import jsonify, request
+from app import app, mysql
+from repositories import EquipoRepository
+
+# Esto debe estar dentro de una función o vista
+def some_view():
+    equipo_repository = EquipoRepository(mysql.connection)
+
 class EquipoRepository:
     def __init__(self, connection):
         self.connection = connection

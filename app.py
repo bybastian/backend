@@ -13,8 +13,6 @@ app.config['MYSQL_DB'] = 'asistente'
 # Configura la extensión MySQL
 mysql = MySQL(app)
 
-from routes import *
-
 if __name__ == '__main__':
-    with app.app_context():  # Establece un contexto de aplicación
-        app.run(debug=True)
+    app.run(debug=True)
+

@@ -2,7 +2,8 @@ from flask import jsonify, request
 from app import app, mysql
 from repositories import EquipoRepository
 
-equipo_repository = EquipoRepository(mysql.connection)
+def get_equipo_repository():
+    return EquipoRepository(mysql.connection)
 
 # Rutas para gestionar equipos
 @app.route('/equipos', methods=['GET'])
