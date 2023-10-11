@@ -1,38 +1,53 @@
-from flask import Flask, request, render_template, redirect, url_for
-from models import Record, records
+from flask import request, jsonify
+from app import mysql
 
-app = Flask(__name)
+def create_equipo():
+    data = request.get_json()
+    cursor = mysql.connection.cursor()
+    query = "INSERT INTO equipo (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (
+        data['nombre'], data['marca'], data['modelo'], data['serie'], data['propietario'], data['fecha_fabricacion'],
+        data['fecha_ingreso'], data['condicion_ingreso'], data['riesgo'], data['id_invima'], data['id_area']
+    )
+    cursor.execute(query, values)
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'message': 'Equipo creado'}), 201
 
-# Ruta para listar registros
-@app.route('/')
-def index():
-    return "Lista de registros"
+@app.route('/equipos', methods=['GET'])
+def get_equipos():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM equipo")
+    equipos = cursor.fetchall()
+    cursor.close()
+    return jsonify(equipos)
 
-# Ruta para crear un nuevo registro
-@app.route('/create', methods=['GET', 'POST'])
-def create():
-    if request.method == 'POST':
-        # Procesar los datos del formulario y agregar un nuevo registro
-        new_record = Record(
-            id=len(records) + 1,
-            name=request.form['name'],
-            description=request.form['description']
-        )
-        records.append(new_record)
-        return redirect(url_for('index'))
-    return "Formulario para crear un registro"
+@app.route('/equipos/<int:id>', methods=['GET'])
+def get_equipo(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM equipo WHERE id = %s", (id,))
+    equipo = cursor.fetchone()
+    cursor.close()
+    return jsonify(equipo)
 
-# Ruta para actualizar un registro
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    # Lógica para actualizar un registro
-    return "Formulario para actualizar un registro"
+@app.route('/equipos/<int:id>', methods=['PUT'])
+def update_equipo(id):
+    data = request.get_json()
+    cursor = mysql.connection.cursor()
+    query = "UPDATE equipo SET nombre = %s, marca = %s, modelo = %s, serie = %s, propietario = %s, fecha_fabricacion = %s, fecha_ingreso = %s, condicion_ingreso = %s, riesgo = %s, id_invima = %s, id_area = %s WHERE id = %s"
+    values = (
+        data['nombre'], data['marca'], data['modelo'], data['serie'], data['propietario'], data['fecha_fabricacion'],
+        data['fecha_ingreso'], data['condicion_ingreso'], data['riesgo'], data['id_invima'], data['id_area'], id
+    )
+    cursor.execute(query, values)
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'message': 'Equipo actualizado'}), 200
 
-# Ruta para eliminar un registro
-@app.route('/delete/<int:id>')
-def delete(id):
-    # Lógica para eliminar un registro
-    return "Eliminando registro"
-
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/equipos/<int:id>', methods=['DELETE'])
+def delete_equipo(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM equipo WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'message': 'Equipo eliminado'}), 200
