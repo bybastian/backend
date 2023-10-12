@@ -1,11 +1,3 @@
-from flask import jsonify, request
-from app import app, mysql
-from repositories import EquipoRepository
-
-# Esto debe estar dentro de una función o vista
-def some_view():
-    equipo_repository = EquipoRepository(mysql.connection)
-
 class EquipoRepository:
     def __init__(self, connection):
         self.connection = connection
@@ -16,7 +8,7 @@ class EquipoRepository:
             cursor.execute("SELECT * FROM equipo")
             equipos = cursor.fetchall()
             cursor.close()
-            return equipos
+            return equipos  # Devuelve una lista de diccionarios con los equipos
         except Exception as e:
             return {"error": str(e)}
 
@@ -56,9 +48,9 @@ class EquipoRepository:
         try:
             cursor = self.connection.cursor(dictionary=True)
             delete_query = "DELETE FROM equipo WHERE id = %(id)s"
-            cursor.execute(delete_query, {"id": id})
-            if cursor.rowcount > 0:
-                self.connection.commit()
+            cursor.execute(delete_query, {"id": id})  # Asegúrate de pasar el parámetro id correctamente
+            self.connection.commit()
             cursor.close()
         except Exception as e:
             return {"error": str(e)}
+
