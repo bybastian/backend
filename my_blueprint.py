@@ -1,13 +1,23 @@
 from flask import Blueprint, jsonify, request
-from repositories.equipo_repository import EquipoRepository
+
 my_blueprint = Blueprint('my_blueprint', __name__)
 
 @my_blueprint.route('/equipos', methods=['GET'])
 def get_equipos_route():
-    equipos = EquipoRepository.get_equipos()
+    from repositories.equipo_repository import EquipoRepository
+    from app import mysql  # Importa la conexión aquí solo para esta función
+    
+    equipo_repository = EquipoRepository(mysql.connection)
+    equipos = equipo_repository.get_equipos()
 
+    for equipo in equipos:
+        print(equipo)  # Imprime un ejemplo de equipo en la consola
+        print(type(equipo))
+
+        
     # Formatea los datos a una lista de diccionarios
     formatted_equipos = []
+
     for equipo in equipos:
         formatted_equipos.append({
             "id": equipo["id"],
