@@ -14,7 +14,7 @@ def get_equipos_route():
         print(equipo)  # Imprime un ejemplo de equipo en la consola
         print(type(equipo))
 
-        
+
     # Formatea los datos a una lista de diccionarios
     formatted_equipos = []
 
@@ -35,3 +35,53 @@ def get_equipos_route():
         })
 
     return jsonify({'equipos': formatted_equipos})
+
+@my_blueprint.route('/equipos', methods=['POST'])
+def create_equipo_route():
+    data = request.get_json()  # Supongamos que los datos se envían en formato JSON
+    nombre = data.get("nombre")
+    marca = data.get("marca")
+    # ... otros campos ...
+
+    # Crea una instancia de EquipoRepository
+    equipo_repository = EquipoRepository(mysql.connection)
+
+    # Llama a la función para crear un equipo
+    equipo_id = equipo_repository.create_equipo(nombre, marca, ...)  # Pasa todos los campos necesarios
+
+    if isinstance(equipo_id, int):
+        return jsonify({'message': 'Equipo creado exitosamente', 'equipo_id': equipo_id}), 201
+    else:
+        return jsonify({'error': 'Error al crear el equipo', 'details': equipo_id}), 500
+
+@my_blueprint.route('/equipos/<int:equipo_id>', methods=['PUT'])
+def update_equipo_route(equipo_id):
+    data = request.get_json()
+    nombre = data.get("nombre")
+    marca = data.get("marca")
+    # ... otros campos ...
+
+    # Crea una instancia de EquipoRepository
+    equipo_repository = EquipoRepository(mysql.connection)
+
+    # Llama a la función para actualizar un equipo
+    success = equipo_repository.update_equipo(equipo_id, nombre, marca, ...)  # Pasa todos los campos necesarios
+
+    if success:
+        return jsonify({'message': 'Equipo actualizado exitosamente'}), 200
+    else:
+        return jsonify({'error': 'Error al actualizar el equipo'}), 500
+
+
+@my_blueprint.route('/equipos/<int:equipo_id>', methods=['DELETE'])
+def delete_equipo_route(equipo_id):
+    # Crea una instancia de EquipoRepository
+    equipo_repository = EquipoRepository(mysql.connection)
+
+    # Llama a la función para eliminar un equipo
+    success = equipo_repository.delete_equipo(equipo_id)
+
+    if success:
+        return jsonify({'message': 'Equipo eliminado exitosamente'}), 200
+    else:
+        return jsonify({'error': 'Error al eliminar el equipo'}), 500

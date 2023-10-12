@@ -26,4 +26,42 @@ class EquipoRepository:
             print("Error al obtener equipos de la base de datos:", str(e))
             return {"error": str(e)}
 
+    def create_equipo(self, nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("""
+                INSERT INTO equipo (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area))
+            self.connection.commit()
+            return cursor.lastrowid  # Devuelve el ID del nuevo equipo
+        except Exception as e:
+            print("Error al crear un equipo:", str(e))
+            return {"error": str(e)}
+
+    def update_equipo(self, equipo_id, nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("""
+                UPDATE equipo
+                SET nombre = %s, marca = %s, modelo = %s, serie = %s, propietario = %s,
+                    fecha_fabricacion = %s, fecha_ingreso = %s, condicion_ingreso = %s,
+                    riesgo = %s, id_invima = %s, id_area = %s
+                WHERE id = %s
+            """, (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area, equipo_id))
+            self.connection.commit()
+            return True  # Devuelve True si la actualización fue exitosa
+        except Exception as e:
+            print("Error al actualizar un equipo:", str(e))
+            return {"error": str(e)}
+
+    def delete_equipo(self, equipo_id):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("DELETE FROM equipo WHERE id = %s", (equipo_id,))
+            self.connection.commit()
+            return True  # Devuelve True si la eliminación fue exitosa
+        except Exception as e:
+            print("Error al eliminar un equipo:", str(e))
+            return {"error": str(e)}
    
