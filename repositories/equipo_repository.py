@@ -17,10 +17,6 @@ class EquipoRepository:
 
             cursor.close()
 
-            # Agrega mensajes de depuración aquí
-            print("Equipos obtenidos de la base de datos:")
-            print(equipos_as_dicts)
-
             return equipos_as_dicts
         except Exception as e:
             print("Error al obtener equipos de la base de datos:", str(e))
@@ -34,7 +30,7 @@ class EquipoRepository:
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area))
             self.connection.commit()
-            return cursor.lastrowid  # Devuelve el ID del nuevo equipo
+            return cursor.lastrowid  # Devuelve el ID del nuevo equipo creado
         except Exception as e:
             print("Error al crear un equipo:", str(e))
             return {"error": str(e)}

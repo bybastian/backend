@@ -38,16 +38,31 @@ def get_equipos_route():
 
 @my_blueprint.route('/equipos', methods=['POST'])
 def create_equipo_route():
-    data = request.get_json()  # Supongamos que los datos se envían en formato JSON
+    from repositories.equipo_repository import EquipoRepository
+    from app import mysql  # Importa la conexión aquí solo para esta función
+
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({'error': 'Datos no proporcionados en el cuerpo de la solicitud'}), 400
+
     nombre = data.get("nombre")
     marca = data.get("marca")
-    # ... otros campos ...
+    modelo = data.get("modelo")
+    serie = data.get("serie")
+    propietario = data.get("propietario")
+    fecha_fabricacion = data.get("fecha_fabricacion")
+    fecha_ingreso = data.get("fecha_ingreso")
+    condicion_ingreso = data.get("condicion_ingreso")
+    riesgo = data.get("riesgo")
+    id_invima = data.get("id_invima")
+    id_area = data.get("id_area")
 
     # Crea una instancia de EquipoRepository
-    equipo_repository = EquipoRepository(mysql.connection)
+    equipo_repository = EquipoRepository(mysql.connection)  # Asegúrate de que `mysql` esté configurado correctamente
 
     # Llama a la función para crear un equipo
-    equipo_id = equipo_repository.create_equipo(nombre, marca, ...)  # Pasa todos los campos necesarios
+    equipo_id = equipo_repository.create_equipo(nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area)
 
     if isinstance(equipo_id, int):
         return jsonify({'message': 'Equipo creado exitosamente', 'equipo_id': equipo_id}), 201
