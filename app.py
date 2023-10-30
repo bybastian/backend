@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_mysqldb import MySQL
 from my_blueprint import my_blueprint  # Importa el Blueprint desde my_blueprint.py
 
