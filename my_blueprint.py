@@ -1,5 +1,6 @@
 from MySQLdb import OperationalError
 from flask import Blueprint, jsonify, request
+from flask_cors import cross_origin
 
 my_blueprint = Blueprint('my_blueprint', __name__)
 

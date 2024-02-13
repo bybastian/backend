@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_mysqldb import MySQL
 from my_blueprint import my_blueprint  # Importa el Blueprint desde my_blueprint.py
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -17,4 +18,5 @@ app.register_blueprint(my_blueprint)  # Registra el Blueprint en la aplicación
 mysql = MySQL(app)
 
 if __name__ == '__main__':
+    CORS(app)
     app.run(debug=True)
