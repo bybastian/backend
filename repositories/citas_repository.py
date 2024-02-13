@@ -22,48 +22,41 @@ class CitasRepository:
             print("Error al obtener equipos de la base de datos:", str(e))
             return {"error": str(e)}
 
-    def create_equipo(self, nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso,
-                      condicion_ingreso, riesgo, id_invima, id_area):
+    def create_cita(self, nombre, fecha, hora):
         try:
             cursor = self.connection.cursor()
-            cursor.execute("""
-                INSERT INTO equipo (nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo, id_invima, id_area)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-            nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo,
-            id_invima, id_area))
+            cursor.execute(
+                """INSERT INTO citas (nombre, fecha, hora) VALUES (%s, %s, %s);""", 
+                           (nombre, fecha, hora))
+            
             self.connection.commit()
-            return cursor.lastrowid  # Devuelve el ID del nuevo equipo creado
+            cursor.close()
+            return {"message": "Cita creada exitosamente"}
+        
         except Exception as e:
-            print("Error al crear un equipo:", str(e))
+            print("Error al crear cita en la base de datos:", str(e))
             return {"error": str(e)}
 
-    def update_equipo(self, equipo_id, nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso,
-                      condicion_ingreso, riesgo, id_invima, id_area):
+    def update_cita(self, cita_id, nombre, fecha, hora):
         try:
             cursor = self.connection.cursor()
-            cursor.execute("""
-                UPDATE equipo
-                SET nombre = %s, marca = %s, modelo = %s, serie = %s, propietario = %s,
-                    fecha_fabricacion = %s, fecha_ingreso = %s, condicion_ingreso = %s,
-                    riesgo = %s, id_invima = %s, id_area = %s
-                WHERE id = %s
-            """, (
-            nombre, marca, modelo, serie, propietario, fecha_fabricacion, fecha_ingreso, condicion_ingreso, riesgo,
-            id_invima, id_area, equipo_id))
+            cursor.execute("UPDATE citas SET nombre = %s, fecha = %s, hora = %s WHERE id = %s;",
+                           (nombre, fecha, hora, cita_id))
             self.connection.commit()
-            return True  # Devuelve True si la actualización fue exitosa
+            cursor.close()
+            return {"message": "Cita actualizada exitosamente"}
         except Exception as e:
-            print("Error al actualizar un equipo:", str(e))
+            print("Error al actualizar cita en la base de datos:", str(e))
             return {"error": str(e)}
 
-    def delete_equipo(self, equipo_id):
+    def delete_cita(self, cita_id):
         try:
             cursor = self.connection.cursor()
-            cursor.execute("DELETE FROM equipo WHERE id = %s", (equipo_id,))
+            cursor.execute("DELETE FROM citas WHERE id = %s;", (cita_id,))
             self.connection.commit()
-            return True
+            cursor.close()
+            return {"message": "Cita eliminada exitosamente"}
         except Exception as e:
-            print("Error al eliminar un equipo:", str(e))
+            print("Error al eliminar cita en la base de datos:", str(e))
             return {"error": str(e)}
 
