@@ -68,14 +68,18 @@ def update_cita(self, cita_id, nombre, fecha, hora):
         print("Error al actualizar cita en la base de datos:", str(e))
         return {"error": "Error en la base de datos"}
 
-@my_blueprint.route('/delete', methods=['DELETE'])
-def delete_cita(self, cita_id):
-    try:
-        cursor = self.connection.cursor()
-        cursor.execute("DELETE FROM citas WHERE id = %s;", (cita_id,))
-        self.connection.commit()
-        cursor.close()
-        return {"message": "Cita eliminada exitosamente"}
-    except OperationalError as e:
-        print("Error al eliminar cita en la base de datos:", str(e))
-        return {"error": "Error en la base de datos"}
+@my_blueprint.route('/delete/<int:cita_id>', methods=['DELETE'])
+def delete_cita(cita_id):
+    from repositories.citas_repository import CitasRepository
+    from app import mysql
+
+    citas_repository = CitasRepository(mysql.connection)
+
+    success = citas_repository.delete_cita(cita_id)
+
+    if success:
+        return jsonify({'message': 'Cita eliminada correctamente'}), 200
+    else:
+        return jsonify({'error': 'Error al eliminar la cita agendad'}), 500
+
+    
